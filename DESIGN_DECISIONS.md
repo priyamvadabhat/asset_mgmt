@@ -1,11 +1,9 @@
-# Design Decisions (Engineering Decision Record)
+# Design Decisions 
 
-Principle: **simplest thing that is correct, safe to rerun, and explainable.** No reusable framework;
-one SQL file per step with comments.
 
 ## 0. Assumptions
 - Daily full-file deliveries, one business date at a time (`business_date` var, default 2026-10-29).
-- Only the five brief datasets; I added `txn_type` (BUY/SELL) to transactions - without it a BUY_BAN cannot be evaluated - and `status` is used as supplied.
+- Only the five brief datasets; I added `txn_type` (BUY/SELL) to transactions - to calculate a BUY_BAN 
 - Valuation is in **local currency** (market value = quantity x price). No FX table was supplied; base-currency reporting is a production addition.
 - A restriction counts only if `status = ACTIVE` **and** the trade date is inside its window. `TRADING_BAN` blocks all trades, `BUY_BAN` blocks BUYs only. A `LIFTED` restriction is ignored even though its dates cover the trade (T1009).
 - Positions are a reported snapshot. Transactions are *not* used to build positions; they are used to **check** them (`GOLD_POSITION_VS_TRANSACTIONS`), because the sample positions include balances with no trade history.

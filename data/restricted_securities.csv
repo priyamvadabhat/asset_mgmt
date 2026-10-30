@@ -1,0 +1,4 @@
+security_id,restriction_type,effective_from,effective_to,status
+SEC004,TRADING_BAN,2026-10-05,2026-10-20,ACTIVE
+SEC005,BUY_BAN,2026-10-01,,ACTIVE
+SEC006,TRADING_BAN,2026-09-01,2026-09-30,LIFTED

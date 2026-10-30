@@ -1,0 +1,64 @@
+version: 2
+
+# Generic tests. `dbt build` runs each model's tests BEFORE building downstream
+# models, so a failing (severity: error) test stops bad data reaching Gold.
+models:
+  - name: silver_transactions
+    description: Typed, validated, de-duplicated transactions with dq_status.
+    columns:
+      - name: transaction_id
+        tests:
+          - unique:                      # idempotency check: no accepted txn appears twice
+              config: {where: "dq_status = 'ACCEPTED'"}
+          - not_null:
+              config: {where: "dq_status = 'ACCEPTED'"}
+      - name: dq_status
+        tests:
+          - accepted_values: {values: ['ACCEPTED', 'REJECTED', 'DUPLICATE']}
+
+  - name: silver_positions
+    columns:
+      - name: dq_status
+        tests:
+          - accepted_values: {values: ['ACCEPTED', 'REJECTED', 'DUPLICATE']}
+
+  - name: silver_market_prices
+    columns:
+      - name: dq_status
+        tests:
+          - accepted_values: {values: ['ACCEPTED', 'REJECTED', 'DUPLICATE']}
+
+  - name: silver_security_master
+    columns:
+      - name: dq_status
+        tests:
+          - accepted_values: {values: ['ACCEPTED', 'REJECTED', 'DUPLICATE']}
+
+  - name: silver_restricted_securities
+    columns:
+      - name: dq_status
+        tests:
+          - accepted_values: {values: ['ACCEPTED', 'REJECTED', 'DUPLICATE']}
+
+  - name: gold_portfolio_positions
+    description: Trusted positions with market value and lineage.
+    columns:
+      - name: market_value
+        tests: [not_null]
+      - name: price
+        tests: [not_null]
+      - name: position_source_file
+        tests: [not_null]
+      - name: pricing_status
+        tests:
+          - accepted_values: {values: ['CURRENT', 'STALE_WARN']}
+
+  - name: gold_compliance_exceptions
+    columns:
+      - name: exception_id
+        tests: [unique, not_null]
+
+  - name: gold_run_reconciliation
+    columns:
+      - name: dataset
+        tests: [unique, not_null]

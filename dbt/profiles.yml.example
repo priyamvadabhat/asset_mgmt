@@ -1,0 +1,25 @@
+# Copy to ~/.dbt/profiles.yml  (NOT into the repo - profiles.yml is git-ignored).
+# Credentials come from environment variables, never from files in git.
+asset_mgmt:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"   # prod: use key-pair auth / SSO instead
+      role: ROLE_TRANSFORM                              # least privilege
+      warehouse: WH_PIPELINE
+      database: ASSET_MGMT
+      schema: GOLD          # default only; models set their own schema
+      threads: 4
+    perf:                   # used by the volume test (snowflake/scenarios/s5_volume_test.sql)
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: ROLE_TRANSFORM
+      warehouse: WH_PIPELINE
+      database: ASSET_MGMT_PERF
+      schema: GOLD
+      threads: 4

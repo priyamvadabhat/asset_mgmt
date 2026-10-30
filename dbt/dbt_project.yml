@@ -1,0 +1,26 @@
+name: asset_mgmt
+version: '1.0.0'
+profile: asset_mgmt
+model-paths: ['models']
+test-paths: ['tests']
+macro-paths: ['macros']
+
+# ---- Pipeline parameters (override with: dbt build --vars '{business_date: 2026-10-30}') ----
+vars:
+  business_date: '2026-10-29'      # the day being processed -> business-date reruns
+  max_price_stale_days: 3          # price older than this => position quarantined
+  reject_rate_warn_threshold: 0.25 # warn if >25% of a dataset is rejected
+  inject_failure: false            # set true to force a mid-run failure (recovery demo)
+
+models:
+  asset_mgmt:
+    silver:
+      +materialized: table
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold
+
+# After every run (success OR failure) write the run log + reconciliation history.
+on-run-end:
+  - "{{ log_run(results) }}"

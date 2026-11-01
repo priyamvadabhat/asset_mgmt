@@ -19,6 +19,10 @@ Pending validations:
 Growing data behaviour
 ---
 
+Future enhancements:
+1. Currently a single source file is being read for this case study purpose. It needs to be enhanced, to read from bucket directly based on timestamps, or needs to be read from landing zone, based on what files need to be processed and what has already processed.
+
+
 ## 1. Repo layout
 
 ```

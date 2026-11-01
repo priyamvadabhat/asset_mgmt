@@ -7,7 +7,7 @@ USE DATABASE ASSET_MGMT;
 -- ---- Masking policy on ISIN -------------------------------------------------
 -- Analysts see ******1234 ; Compliance / pipeline roles see the full value.
 -- dbt re-applies this to GOLD.GOLD_PORTFOLIO_POSITIONS after each rebuild
--- (see the post_hook in that model).
+
 CREATE OR REPLACE MASKING POLICY AUDIT.MASK_ISIN AS (val STRING) RETURNS STRING ->
   CASE
     WHEN CURRENT_ROLE() IN ('ROLE_COMPLIANCE', 'ROLE_TRANSFORM', 'ACCOUNTADMIN') THEN val

@@ -1,13 +1,13 @@
 -- =============================================================================
 -- 02_raw_and_audit_tables.sql  |  Run as ACCOUNTADMIN (once)
--- RAW (Bronze) tables, stage, file formats and AUDIT tables.
+-- Create RAW (Bronze) tables, stage, file formats and AUDIT tables.
 -- =============================================================================
 USE DATABASE ASSET_MGMT;
 USE WAREHOUSE WH_PIPELINE;
 
 -- ---- File formats -----------------------------------------------------------
 -- Used for loading. Header is skipped; a column-count mismatch FAILS the load
--- (that is our schema-change guard, see DESIGN_DECISIONS.md section 5).
+-- (that is our schema-change guard).
 CREATE OR REPLACE FILE FORMAT RAW.CSV_FMT
   TYPE = CSV
   SKIP_HEADER = 1

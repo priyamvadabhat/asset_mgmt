@@ -23,7 +23,7 @@ with parsed as (
     from {{ source('raw', 'transactions') }}
 ),
 
--- STEP 2: temporal join - the security master row that was valid ON THE TRADE DATE
+-- STEP 2: effective dated lookup - the security master row that was valid ON THE TRADE DATE
 joined as (
     select
         p.*,

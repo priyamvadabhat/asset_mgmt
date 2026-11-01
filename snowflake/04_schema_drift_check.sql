@@ -11,23 +11,23 @@ USE WAREHOUSE WH_PIPELINE;
 WITH actual AS (
   SELECT 'security_master' AS dataset,
          LISTAGG(LOWER(column_name), ',') WITHIN GROUP (ORDER BY order_id) AS cols
-  FROM TABLE(INFER_SCHEMA(LOCATION => '@RAW.LANDING_STAGE/security_master/', FILE_FORMAT => 'RAW.CSV_HEADER_FMT'))
+  FROM TABLE(INFER_SCHEMA(LOCATION => '@RAW.LANDING_STAGE/security_master.csv', FILE_FORMAT => 'RAW.CSV_HEADER_FMT'))
   UNION ALL
   SELECT 'transactions',
          LISTAGG(LOWER(column_name), ',') WITHIN GROUP (ORDER BY order_id)
-  FROM TABLE(INFER_SCHEMA(LOCATION => '@RAW.LANDING_STAGE/transactions/', FILE_FORMAT => 'RAW.CSV_HEADER_FMT'))
+  FROM TABLE(INFER_SCHEMA(LOCATION => '@RAW.LANDING_STAGE/transactions.csv', FILE_FORMAT => 'RAW.CSV_HEADER_FMT'))
   UNION ALL
   SELECT 'positions',
          LISTAGG(LOWER(column_name), ',') WITHIN GROUP (ORDER BY order_id)
-  FROM TABLE(INFER_SCHEMA(LOCATION => '@RAW.LANDING_STAGE/positions/', FILE_FORMAT => 'RAW.CSV_HEADER_FMT'))
+  FROM TABLE(INFER_SCHEMA(LOCATION => '@RAW.LANDING_STAGE/positions.csv', FILE_FORMAT => 'RAW.CSV_HEADER_FMT'))
   UNION ALL
   SELECT 'market_prices',
          LISTAGG(LOWER(column_name), ',') WITHIN GROUP (ORDER BY order_id)
-  FROM TABLE(INFER_SCHEMA(LOCATION => '@RAW.LANDING_STAGE/market_prices/', FILE_FORMAT => 'RAW.CSV_HEADER_FMT'))
+  FROM TABLE(INFER_SCHEMA(LOCATION => '@RAW.LANDING_STAGE/market_prices.csv', FILE_FORMAT => 'RAW.CSV_HEADER_FMT'))
   UNION ALL
   SELECT 'restricted_securities',
          LISTAGG(LOWER(column_name), ',') WITHIN GROUP (ORDER BY order_id)
-  FROM TABLE(INFER_SCHEMA(LOCATION => '@RAW.LANDING_STAGE/restricted_securities/', FILE_FORMAT => 'RAW.CSV_HEADER_FMT'))
+  FROM TABLE(INFER_SCHEMA(LOCATION => '@RAW.LANDING_STAGE/restricted_securities.csv', FILE_FORMAT => 'RAW.CSV_HEADER_FMT'))
 ),
 expected AS (
   SELECT 'security_master' AS dataset, 'security_id,isin,asset_class,currency,effective_from,effective_to' AS cols
@@ -39,3 +39,5 @@ expected AS (
 SELECT e.dataset, e.cols AS expected_columns, a.cols AS actual_columns,
        (e.cols = a.cols) AS header_ok
 FROM expected e LEFT JOIN actual a USING (dataset);
+
+list @raw.landing_stage;

@@ -23,12 +23,12 @@ CREATE OR REPLACE FILE FORMAT RAW.CSV_HEADER_FMT
 
 -- ---- Landing stage ----------------------------------------------------------
 -- Internal stage (encrypted at rest). In production this would be an external
--- stage on S3/Azure/GCS via a STORAGE INTEGRATION (no keys in code).
+-- stage on S3/Azure/GCS via a STORAGE INTEGRATION.
 CREATE STAGE IF NOT EXISTS RAW.LANDING_STAGE
   ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 
 -- ---- RAW tables -------------------------------------------------------------
--- Every business column is VARCHAR: bad data (e.g. quantity = 'abc') must LAND
+-- Every business column is VARCHAR: bad data (e.g. quantity = 'abc') must land
 -- so it can be quarantined and counted, never fail the load or vanish.
 -- _source_file / _source_row / _loaded_at give record-level lineage.
 CREATE TABLE IF NOT EXISTS RAW.SECURITY_MASTER (
@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS RAW.RESTRICTED_SECURITIES (
   _loaded_at TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
 );
 
--- ---- AUDIT tables (written by dbt on-run-end hook) ---------------------------
--- One row per pipeline run: success/failure and node counts.
+-- ---- AUDIT tables (written for dbt) ---------------------------
+-- One row per pipeline run: success/failure and node details (to ensure no uncontrolled partial publication)
 CREATE TABLE IF NOT EXISTS AUDIT.PIPELINE_RUN_LOG (
   run_id VARCHAR, run_ts TIMESTAMP_NTZ, business_date DATE, status VARCHAR,
   nodes_ok NUMBER, nodes_failed NUMBER, nodes_skipped NUMBER, dbt_command VARCHAR

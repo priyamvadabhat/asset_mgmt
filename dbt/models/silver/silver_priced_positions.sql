@@ -1,5 +1,5 @@
 -- =============================================================================
--- SILVER : positions for the business date, joined to the best market price.
+-- SILVER :  matches positions to the best available price and determines whether that price is current, stale, or missing.
 -- Decides the PRICING outcome of every accepted position:
 --   CURRENT       price dated on the position date
 --   STALE_WARN    price 1..max_price_stale_days old   -> published, flagged
